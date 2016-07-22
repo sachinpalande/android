@@ -1,0 +1,214 @@
+package com.example.window10.calculatorwitharaaylist;
+
+/**
+ * Created by WINDOW10 on 7/19/2016.
+ */
+
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+
+
+/**
+ * Created by WINDOW10 on 7/18/2016.
+ */
+public class BottomFragment extends Fragment {
+
+    private static TextView showButtonText;
+    private static TextView displayText;
+    private static Button buttonEqual;
+    String inputByUser;
+    ArrayList<Character> operationArray = new ArrayList<Character>();
+    ArrayList<Float> numberArray = new ArrayList<Float>();
+
+    @Nullable
+    @Override
+    public View onCreateView(final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.bottom_fragment,container,false);
+        showButtonText = (TextView)view.findViewById(R.id.showButtonText);
+        buttonEqual = (Button)view.findViewById(R.id.buttonEqual);
+        displayText =(TextView)view.findViewById(R.id.showText);
+
+        buttonEqual.setOnClickListener(
+                new Button.OnClickListener(){
+                    public void onClick(View v){
+                        calculateResult(v);
+                    }
+                }
+        );
+
+        return view;
+    }
+
+
+
+
+    public void setClickedText(String showNumberText){
+        showButtonText.append(showNumberText);
+    }
+
+    public void clearTextClicked(boolean buttonClearPressed, boolean buttonBackspacePressed){
+        if(buttonClearPressed == true)
+        {
+            showButtonText.setText("");
+        }
+        if(buttonBackspacePressed == true)
+        {
+            int length = showButtonText.getText().length();
+            String text = showButtonText.getText().toString();
+            if (length > 0) {
+                showButtonText.setText(text.substring(0, text.length() - 1));
+            }
+            //showButtonText.setText("");
+        }
+    }
+
+    public void formatResult(){
+        float valueToBeTypeCast = numberArray.get(0);
+        int typeCastedValue = (int) valueToBeTypeCast;
+        if(typeCastedValue < valueToBeTypeCast)
+        {
+            displayText.setText(Float.toString(valueToBeTypeCast));
+        }
+        else
+        {
+            displayText.setText(Integer.toString(typeCastedValue));
+        }
+    }
+
+    public void calculateResult(View view){
+        int separateTwoArrays = 0;
+        inputByUser = showButtonText.getText().toString();
+        inputByUser = inputByUser + "=";
+        int operationArrayIndexAddSub=0;
+
+
+
+        if(inputByUser.charAt(inputByUser.length()-1) == '+' || inputByUser.charAt(0) == '+' ||
+                inputByUser.charAt(inputByUser.length()-1) == '-' || inputByUser.charAt(0) == '-' ||
+                inputByUser.charAt(inputByUser.length()-1) == '*' || inputByUser.charAt(0) == '*' ||
+                inputByUser.charAt(inputByUser.length()-1) == '/' || inputByUser.charAt(0) == '/')
+            {
+
+            AlertDialog.Builder builder1 = new AlertDialog.Builder(getActivity());
+            builder1.setMessage("Please enter valid Expression");
+            builder1.setCancelable(true);
+
+            builder1.setPositiveButton("Ok",new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    dialog.cancel();
+                }
+            });
+
+            AlertDialog alert11 = builder1.create();
+            alert11.show();
+
+            displayText.setText("0");
+            }
+
+        for(int checkDoubleOperant = 0;checkDoubleOperant < inputByUser.length(); checkDoubleOperant++ )
+        {
+            if(!(inputByUser.charAt(inputByUser.length()-1) == '+' ||
+                    inputByUser.charAt(inputByUser.length()-1) == '-' ||
+                    inputByUser.charAt(inputByUser.length()-1) == '*' ||
+                    inputByUser.charAt(inputByUser.length()-1) == '/'))
+
+            {
+                if (((inputByUser.charAt(checkDoubleOperant) == '+') ||
+                    (inputByUser.charAt(checkDoubleOperant) == '-') ||
+                    (inputByUser.charAt(checkDoubleOperant) == '*') ||
+                    (inputByUser.charAt(checkDoubleOperant) == '/'))
+                    &&
+                    ((inputByUser.charAt(checkDoubleOperant + 1) == '+') ||
+                    (inputByUser.charAt(checkDoubleOperant + 1) == '-') ||
+                    (inputByUser.charAt(checkDoubleOperant + 1) == '*') ||
+                    (inputByUser.charAt(checkDoubleOperant + 1) == '/')))
+                {
+                    AlertDialog.Builder builder1 = new AlertDialog.Builder(getActivity());
+                    builder1.setMessage("Please Enter Valid Expression");
+                    builder1.setCancelable(true);
+
+                    builder1.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+
+                    AlertDialog alert11 = builder1.create();
+                    alert11.show();
+
+                    displayText.setText("0");
+                }
+            }
+
+            if((inputByUser.charAt(checkDoubleOperant) == '+') ||
+                    (inputByUser.charAt(checkDoubleOperant) == '-') ||
+                    (inputByUser.charAt(checkDoubleOperant) == '*') ||
+                    (inputByUser.charAt(checkDoubleOperant) == '/') ||
+                    (inputByUser.charAt(checkDoubleOperant) == '='))
+            {
+                numberArray.add(Float.parseFloat(inputByUser.substring(separateTwoArrays,checkDoubleOperant)));
+                operationArray.add(inputByUser.charAt(checkDoubleOperant));
+                separateTwoArrays = checkDoubleOperant+1;
+                displayText.setText(inputByUser);
+            }
+        }
+
+
+        for(int operationArrayIndex = 0; operationArrayIndex < operationArray.size();operationArrayIndex++ )
+        {
+            if((operationArray.get(operationArrayIndex) == '*') ||
+                    (operationArray.get(operationArrayIndex) == '/'))
+            {
+                if(operationArray.get(operationArrayIndex) == '*')
+                {
+                    numberArray.add(operationArrayIndex,numberArray.get(operationArrayIndex) * numberArray.get(operationArrayIndex+1));
+                }
+
+                else
+                {
+                    numberArray.add(operationArrayIndex,numberArray.get(operationArrayIndex) / numberArray.get(operationArrayIndex+1));
+                }
+                numberArray.remove(operationArrayIndex+1);
+                numberArray.remove(operationArrayIndex+1);
+                operationArray.remove(operationArrayIndex);
+                operationArrayIndex--;
+
+            }
+        }
+
+        for(int operationArrayIndex = 0; operationArrayIndex < operationArray.size();operationArrayIndex++ )
+        {
+            if((operationArray.get(operationArrayIndex) == '+') ||
+                    (operationArray.get(operationArrayIndex) == '-'))
+            {
+                if(operationArray.get(operationArrayIndex) == '+')
+                {
+
+                    numberArray.add(operationArrayIndexAddSub,numberArray.get(operationArrayIndexAddSub) + numberArray.get(operationArrayIndexAddSub+1));
+                }
+                else
+                {
+                    numberArray.add(operationArrayIndexAddSub,numberArray.get(operationArrayIndexAddSub) - numberArray.get(operationArrayIndexAddSub+1));
+                }
+
+                numberArray.remove(operationArrayIndexAddSub+1);
+                numberArray.remove(operationArrayIndexAddSub+1);
+                operationArray.remove(operationArrayIndex);
+                operationArrayIndex--;
+            }
+        }
+
+        formatResult();
+    }
+}
