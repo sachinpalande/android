@@ -1,0 +1,138 @@
+package com.example.window10.calculatorwitharaaylist;
+
+/**
+ * Created by WINDOW10 on 7/19/2016.
+ */
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+
+
+/**
+ * Created by WINDOW10 on 7/18/2016.
+ */
+public class TopFragment extends Fragment implements View.OnClickListener {
+
+    public static Button button1;
+    public static Button button2;
+    public static Button button3;
+    public static Button button4;
+    public static Button button5;
+    public static Button button6;
+    public static Button button7;
+    public static Button button8;
+    public static Button button9;
+    public static Button button0;
+    public static Button buttonDot;
+    public static Button buttonAdd;
+    public static Button buttonSub;
+    public static Button buttonMul;
+    public static Button buttonDiv;
+    public static Button buttonClear;
+    public static Button buttonBackspace;
+    boolean buttonClearPressed = false;
+    boolean buttonbackspacePressed = false;
+
+
+
+    TopSectionListener activityCommander;
+
+    @Override
+    public void onClick(View view) {
+        Button buttonText = (Button)view;
+        activityCommander.createClick(buttonText.getText().toString());
+    }
+
+    public interface TopSectionListener {
+        public void createClick(String showNumberText);
+        public void clearOrBackspace(boolean buttonClearPressed, boolean buttonbackspacePressed);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try{
+            activityCommander=(TopSectionListener) activity;
+        }catch (ClassCastException e){
+            throw new ClassCastException(activity.toString());
+        }
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.top_fragment, container, false);
+        button1         = (Button) view.findViewById(R.id.button1);
+        button2         = (Button) view.findViewById(R.id.button2);
+        button3         = (Button) view.findViewById(R.id.button3);
+        button4         = (Button) view.findViewById(R.id.button4);
+        button5         = (Button) view.findViewById(R.id.button5);
+        button6         = (Button) view.findViewById(R.id.button6);
+        button7         = (Button) view.findViewById(R.id.button7);
+        button8         = (Button) view.findViewById(R.id.button8);
+        button9         = (Button) view.findViewById(R.id.button9);
+        button0         = (Button) view.findViewById(R.id.button0);
+        buttonDot       = (Button) view.findViewById(R.id.buttonDot);
+        buttonAdd       = (Button) view.findViewById(R.id.buttonAdd);
+        buttonSub       = (Button) view.findViewById(R.id.buttonSub);
+        buttonMul       = (Button) view.findViewById(R.id.buttonMul);
+        buttonDiv       = (Button) view.findViewById(R.id.buttonDiv);
+        buttonBackspace = (Button) view.findViewById(R.id.buttonBackspace);
+        buttonClear     = (Button) view.findViewById(R.id.buttonClear);
+
+
+        button1.setOnClickListener(this);
+        button2.setOnClickListener(this);
+        button3.setOnClickListener(this);
+        button4.setOnClickListener(this);
+        button5.setOnClickListener(this);
+        button6.setOnClickListener(this);
+        button7.setOnClickListener(this);
+        button8.setOnClickListener(this);
+        button9.setOnClickListener(this);
+        button0.setOnClickListener(this);
+        buttonDot.setOnClickListener(this);
+        buttonAdd.setOnClickListener(this);
+        buttonSub.setOnClickListener(this);
+        buttonMul.setOnClickListener(this);
+        buttonDiv.setOnClickListener(this);
+        //buttonBackspace.setOnClickListener(this);
+
+        buttonBackspace.setOnClickListener(
+                new Button.OnClickListener(){
+                    public void onClick(View v){
+                        buttonClearPressed = false;
+                        buttonbackspacePressed = true;
+                        buttonClickedClear(buttonClearPressed, buttonbackspacePressed);
+                    }
+                }
+        );
+
+        //buttonClear.setOnClickListener(this);
+        buttonClear.setOnClickListener(
+                new Button.OnClickListener(){
+                    public void onClick(View v){
+                        buttonClearPressed = true;
+                        buttonbackspacePressed = false;
+                        buttonClickedClear(buttonClearPressed, buttonbackspacePressed);
+                    }
+                }
+        );
+
+        return view;
+    }
+    public void buttonClickedClear(boolean buttonClearPressed, boolean buttonbackspacePressed)
+    {
+        activityCommander.clearOrBackspace(buttonClearPressed, buttonbackspacePressed);
+    }
+
+
+
+}
